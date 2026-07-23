@@ -21,7 +21,7 @@ Entstanden ist dieses Projekt aus der Not heraus, dass herkömmliche ESP32-Lösu
 Aktuell ist der integrierte Decoder auf folgende Geräte abgestimmt:
 * **Inverter RS Smart** (Inklusive AC-Last, Ertrag, Spannung, Strom)
 * **MPPT 450/100** (und voraussichtlich die meisten anderen SmartSolar MPPT Laderegler)
-* *(Weitere Victron-Geräte wie SmartShunts können leicht im Code ergänzt werden, da die Infrastruktur bereits steht.)*
+* **MultiPlus** (Wird in Kürze nachgereicht!)
 
 ---
 
