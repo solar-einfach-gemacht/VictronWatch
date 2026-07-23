@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VictronWatch - Live Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #1e1e2e; color: #cdd6f4; margin: 0; padding: 20px; }
+        h1 { text-align: center; color: #89b4fa; }
+        .nav { text-align: center; margin-bottom: 30px; }
+        .nav a { color: #a6e3a1; text-decoration: none; font-weight: bold; background: #313244; padding: 10px 20px; border-radius: 8px; }
+        
+        .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 1200px; margin: auto; }
+        .card { background: #313244; padding: 20px; border-radius: 12px; width: 320px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .card h2 { margin-top: 0; color: #f9e2af; border-bottom: 1px solid #45475a; padding-bottom: 10px; }
+        .card small { color: #9399b2; font-size: 14px; }
+        
+        .data-row { display: flex; justify-content: space-between; margin: 12px 0; font-size: 18px; }
+        .highlight { font-weight: bold; color: #89dceb; }
+        .status-badge { background: #a6e3a1; color: #1e1e2e; padding: 2px 8px; border-radius: 4px; font-size: 14px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>⚡ VictronWatch Live</h1>
+    <div class="nav">
+        <a href="/setup">⚙️ Zur Kommandozentrale</a>
+    </div>
+
+    <div id="dashboard" class="grid">
+        <p>Warte auf erste Bluetooth-Daten...</p>
+    </div>
+
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/data');
+                const data = await response.json();
+                
+                const container = document.getElementById('dashboard');
+                let newHTML = '';
+
+                // Für jedes gefundene Gerät eine Kachel bauen
+                for (const [mac, dev] of Object.entries(data)) {
+                    newHTML += `
+                        <div class="card">
+                            <h2>${dev.name} <br><small>${dev.type}</small></h2>
+                            <div class="data-row"><span>Status:</span> <span class="status-badge">${dev.status}</span></div>
+                            <div class="data-row"><span>Spannung:</span> <span class="highlight">${dev.spannung.toFixed(2)} V</span></div>
+                            <div class="data-row"><span>Strom:</span> <span class="highlight">${dev.strom.toFixed(2)} A</span></div>
+                            <div class="data-row"><span>Solar-Leistung:</span> <span class="highlight">${dev.pv_leistung} W</span></div>
+                            <div class="data-row"><span>Ertrag Heute:</span> <span class="highlight">${dev.ertrag_heute} Wh</span></div>
+                    `;
+                    
+                    // AC-Last nur anzeigen, wenn es der Inverter ist
+                    if (dev.type === 'Inverter RS') {
+                        newHTML += `<div class="data-row"><span>AC Last:</span> <span class="highlight">${dev.ac_last} W</span></div>`;
+                    }
+                    
+                    newHTML += `</div>`;
+                }
+
+                if (newHTML !== '') {
+                    container.innerHTML = newHTML;
+                }
+
+            } catch (error) {
+                console.error("Verbindungsfehler:", error);
+            }
+        }
+
+        // Alle 2 Sekunden (2000 Millisekunden) neue Daten holen
+        setInterval(fetchData, 2000);
+        fetchData();
+    </script>
+
+</body>
+</html>
