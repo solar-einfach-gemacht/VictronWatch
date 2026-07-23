@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VictronWatch - Setup</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #1e1e2e; color: #cdd6f4; padding: 20px; }
+        .container { max-width: 600px; margin: auto; background: #313244; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        h1 { text-align: center; color: #89b4fa; }
+        h3 { border-bottom: 1px solid #45475a; padding-bottom: 10px; }
+        .device-item { background: #45475a; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 5px solid #a6e3a1; }
+        form { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+        input, select, button { padding: 12px; font-size: 16px; border-radius: 6px; border: none; background: #1e1e2e; color: #cdd6f4; }
+        input:focus, select:focus { outline: 2px solid #89b4fa; }
+        button { background: #89b4fa; color: #1e1e2e; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        button:hover { background: #74c7ec; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚙️ Kommandozentrale</h1>
+        
+        <div class="device-list">
+            <h3>Gespeicherte Geräte</h3>
+            {% if devices %}
+                {% for device in devices %}
+                    <div class="device-item">
+                        <strong>{{ device.name }}</strong> ({{ device.type }})<br>
+                        <small>MAC: {{ device.mac }}</small>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Noch keine Geräte vorhanden. Füge unten dein erstes hinzu!</p>
+            {% endif %}
+        </div>
+
+        <h3>➕ Neues Gerät hinzufügen</h3>
+        <form action="/add" method="POST">
+            <input type="text" name="name" placeholder="Name (z.B. Inverter Garage)" required>
+            <select name="device_type" required>
+                <option value="" disabled selected>Gerätetyp auswählen...</option>
+                <option value="Inverter RS">Inverter RS Smart</option>
+                <option value="MPPT 450/100">MPPT Solar Charger</option>
+                <option value="MultiPlus">MultiPlus (zukünftig)</option>
+            </select>
+            <input type="text" name="mac" placeholder="MAC-Adresse (z.B. C7:92:29...)" required>
+            <input type="text" name="bindkey" placeholder="Bindkey (32 Zeichen)" required>
+            <button type="submit">Gerät speichern</button>
+        </form>
+    </div>
+</body>
+</html>
